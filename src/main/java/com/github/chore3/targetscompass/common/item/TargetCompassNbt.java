@@ -1,8 +1,12 @@
 package com.github.chore3.targetscompass.common.item;
 
 import com.github.chore3.targetscompass.Targetscompass;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtUtils;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 
 public class TargetCompassNbt {
     public static final String TARGET_TAG_KEY = Targetscompass.MOD_ID + ":TargetTag";
@@ -27,5 +31,24 @@ public class TargetCompassNbt {
         CompoundTag tag = stack.getTag();
         if (tag == null) return;
         tag.remove(TARGET_TAG_KEY);
+    }
+
+    public static void nearestTargetPosSet(ResourceKey<Level> level, ItemStack stack, BlockPos targetPos){
+        if (stack == null || stack.isEmpty()) return;
+        stack.getOrCreateTag().put(NEAREST_TARGET_POS_KEY, NbtUtils.writeBlockPos(targetPos));
+    }
+
+    public static BlockPos nearestTargetPosGet(ItemStack stack){
+        if (stack == null || stack.isEmpty()) return null;
+        CompoundTag tag = stack.getTag();
+        if (tag == null) return null;
+        return NbtUtils.readBlockPos(tag.getCompound(NEAREST_TARGET_POS_KEY));
+    }
+
+    public static void nearestTargetPosClear(ItemStack stack){
+        if (stack == null || stack.isEmpty()) return;
+        CompoundTag tag = stack.getTag();
+        if (tag == null) return;
+        tag.remove(NEAREST_TARGET_POS_KEY);
     }
 }
