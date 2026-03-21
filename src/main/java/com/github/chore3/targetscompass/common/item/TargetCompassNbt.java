@@ -14,6 +14,7 @@ public class TargetCompassNbt {
 
     private TargetCompassNbt(){}
 
+    // targetTag
     public static void targetTagSet(ItemStack stack, String targetTag){
         if (stack == null || stack.isEmpty()) return;
         stack.getOrCreateTag().putString(TARGET_TAG_KEY, targetTag);
@@ -33,6 +34,7 @@ public class TargetCompassNbt {
         tag.remove(TARGET_TAG_KEY);
     }
 
+    // NearestTargetPos
     public static void nearestTargetPosSet(ResourceKey<Level> level, ItemStack stack, BlockPos targetPos){
         if (stack == null || stack.isEmpty()) return;
         stack.getOrCreateTag().put(NEAREST_TARGET_POS_KEY, NbtUtils.writeBlockPos(targetPos));
