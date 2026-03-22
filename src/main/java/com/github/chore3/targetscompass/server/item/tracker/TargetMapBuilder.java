@@ -11,13 +11,17 @@ import net.minecraft.world.item.Items;
 
 import java.util.*;
 
-public class TargetMapBuilder {
+public final class TargetMapBuilder {
     private static final TargetMapBuilder INSTANCE = new TargetMapBuilder();
 
     private final Map<String, List<Player>> targetMap = new HashMap<>();
     private long lastBuiltStamp = Long.MIN_VALUE;
 
     private TargetMapBuilder() {}
+
+    public static TargetMapBuilder getInstance() {
+        return INSTANCE;
+    }
 
     public void rebuild(MinecraftServer server){
         tagUpdate(server);
