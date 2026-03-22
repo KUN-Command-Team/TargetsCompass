@@ -1,11 +1,22 @@
 package com.github.chore3.targetscompass;
 
-import com.mojang.logging.LogUtils;
+import com.github.chore3.targetscompass.server.commands.TargetTagCommand;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.server.ServerStartingEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import org.slf4j.Logger;
 
 @Mod("targetscompass")
 public class Targetscompass {
     public static final String MOD_ID = "targetscompass";
-    public static final Logger LOGGER = LogUtils.getLogger();
+
+    @SuppressWarnings("removal")
+    public Targetscompass() {
+        MinecraftForge.EVENT_BUS.register(this);
+    }
+
+    @SubscribeEvent
+    public void onServerStarting(ServerStartingEvent event){
+        TargetTagCommand.register(event.getServer().getCommands().getDispatcher());
+    }
 }
