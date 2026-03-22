@@ -7,8 +7,8 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 
 public class TargetTagCommand {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher){
@@ -21,8 +21,8 @@ public class TargetTagCommand {
 
     private static int applyTargetTag(CommandContext<CommandSourceStack> context, String message) throws CommandSyntaxException {
         CommandSourceStack source = context.getSource();
-        Player player = source.getPlayerOrException();
-        ItemStack itemInHand = player.getMainHandItem();
+        ItemStack itemInHand = source.getPlayerOrException().getMainHandItem();
+        if (!itemInHand.is(Items.COMPASS)) return 0;
         TargetCompassNbt.targetTagSet(itemInHand, message);
         return 1;
     }
