@@ -29,10 +29,12 @@ public final class TargetMapBuilder {
     }
 
     public void rebuild(MinecraftServer server){
+        if (server == null) return;
         targetMap.clear();
         tagUpdate(server);
         playerUpdate(server);
     }
+    
     public void tagUpdate(MinecraftServer server){
         PlayerList list = server.getPlayerList();
         for (ServerPlayer player : list.getPlayers()){
