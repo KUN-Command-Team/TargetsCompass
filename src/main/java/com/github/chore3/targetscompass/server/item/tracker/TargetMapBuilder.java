@@ -10,6 +10,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
 import java.util.*;
+import java.util.Collections;
 
 public final class TargetMapBuilder {
     private static final TargetMapBuilder INSTANCE = new TargetMapBuilder();
@@ -21,6 +22,10 @@ public final class TargetMapBuilder {
 
     public static TargetMapBuilder getInstance() {
         return INSTANCE;
+    }
+
+    public Map<String, List<Player>> getTargetMap() {
+        return Collections.unmodifiableMap(targetMap);
     }
 
     public void rebuild(MinecraftServer server){
