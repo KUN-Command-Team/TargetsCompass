@@ -29,6 +29,7 @@ public final class TargetMapBuilder {
     }
 
     public void rebuild(MinecraftServer server){
+        targetMap.clear();
         tagUpdate(server);
         playerUpdate(server);
     }
