@@ -51,24 +51,4 @@ public class TargetCompassNbt {
         if (root == null) return;
         root.remove(TARGET_TAG_KEY);
     }
-
-    // NearestTargetPos
-    public static void nearestTargetPosSet(ItemStack stack, BlockPos targetPos){
-        if (stack == null || stack.isEmpty() || targetPos == null) return;
-        CompoundTag root = getOrCreateRootTag(stack);
-        root.put(NEAREST_TARGET_POS_KEY, NbtUtils.writeBlockPos(targetPos));
-        stack.getOrCreateTag().put(ROOT_KEY, root);
-    }
-
-    public static BlockPos nearestTargetPosGet(ItemStack stack){
-        CompoundTag root = getRootTag(stack);
-        if (root == null || !root.contains(NEAREST_TARGET_POS_KEY, 10)) return null;
-        return NbtUtils.readBlockPos(root.getCompound(NEAREST_TARGET_POS_KEY));
-    }
-
-    public static void nearestTargetPosClear(ItemStack stack){
-        CompoundTag root = getRootTag(stack);
-        if (root == null) return;
-        root.remove(NEAREST_TARGET_POS_KEY);
-    }
 }
