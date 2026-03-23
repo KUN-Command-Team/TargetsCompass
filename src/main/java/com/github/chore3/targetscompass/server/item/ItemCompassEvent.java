@@ -1,6 +1,7 @@
 package com.github.chore3.targetscompass.server.item;
 
 import com.github.chore3.targetscompass.common.item.TargetCompassNbt;
+import com.github.chore3.targetscompass.server.item.tracker.TargetCompassUpdater;
 import com.github.chore3.targetscompass.server.item.tracker.TargetMapBuilder;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.entity.player.Player;
@@ -37,6 +38,7 @@ public class ItemCompassEvent {
             String targetTag = TargetCompassNbt.targetTagGet(stack);
             if (targetTag == null || targetTag.isEmpty()) continue;
             if (TargetCompassNbt.targetTagGet(stack) == null) continue;
+            TargetCompassUpdater.updateNearestTarget(stack, player, player.level());
         }
     }
 }
