@@ -1,7 +1,6 @@
 package com.github.chore3.targetscompass.client.cache;
 
 import net.minecraft.core.GlobalPos;
-import org.openjdk.nashorn.internal.objects.Global;
 
 import javax.annotation.Nullable;
 import java.util.HashMap;
