@@ -16,14 +16,16 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.server.ServerLifecycleHooks;
 
+import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.WeakHashMap;
 
 @Mod.EventBusSubscriber(modid = "targetscompass", bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class ItemCompassEvent {
     private static final int REBUILD_INTERVAL = 5;
+    private static final int TARGET_SYNC_DISTANCE_BLOCKS = 2;
+    private static final int TARGET_SYNC_DISTANCE_SQ = TARGET_SYNC_DISTANCE_BLOCKS * TARGET_SYNC_DISTANCE_BLOCKS;
 
     @SubscribeEvent
     public static void onServerTick(TickEvent.ServerTickEvent event) {
@@ -59,7 +61,7 @@ public class ItemCompassEvent {
             }
 
             GlobalPos nearestTargetPos = nearestTargetPosByTag.get(targetTag);
-            if (!Objects.equals(nearestTargetPos, lastSentPosMap.get(targetTag))) {
+            if (shouldSync(nearestTargetPos, lastSentPosMap.get(targetTag))) {
                 TargetCompassNetwork.CHANNEL.send(
                     PacketDistributor.PLAYER.with(() -> player),
                     new SyncTargetTagPosS2CPacket(targetTag, nearestTargetPos)
@@ -68,5 +70,12 @@ public class ItemCompassEvent {
             }
         }
         lastSentPos.put(player, lastSentPosMap);
+    }
+
+    private static boolean shouldSync(@Nullable GlobalPos currentPos, @Nullable GlobalPos lastSentPos) {
+        if (lastSentPos == null) return currentPos != null;
+        if (currentPos == null) return true;
+        if (!currentPos.dimension().equals(lastSentPos.dimension())) return true;
+        return currentPos.pos().distSqr(lastSentPos.pos()) >= TARGET_SYNC_DISTANCE_SQ;
     }
 }
