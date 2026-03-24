@@ -1,16 +1,20 @@
 package com.github.chore3.targetscompass.server.item;
 
 import com.github.chore3.targetscompass.common.item.TargetCompassNbt;
+import com.github.chore3.targetscompass.common.network.SyncTargetTagPosS2CPacket;
+import com.github.chore3.targetscompass.common.network.TargetCompassNetwork;
 import com.github.chore3.targetscompass.server.item.tracker.TargetCompassUpdater;
 import com.github.chore3.targetscompass.server.item.tracker.TargetMapBuilder;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.server.ServerLifecycleHooks;
 
 import java.util.HashMap;
@@ -50,7 +54,10 @@ public class ItemCompassEvent {
 
             GlobalPos nearestTargetPos = nearestTargetPosByTag.get(targetTag);
             if (nearestTargetPos != null) {
-                // TODO: targetTag ごとの同期送信処理をここに追加する
+                TargetCompassNetwork.CHANNEL.send(
+                        PacketDistributor.PLAYER.with(() -> (ServerPlayer) player),
+                        new SyncTargetTagPosS2CPacket(targetTag, nearestTargetPos)
+                );
             }
         }
     }
