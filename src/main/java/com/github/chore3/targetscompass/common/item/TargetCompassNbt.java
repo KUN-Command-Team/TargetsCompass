@@ -1,28 +1,23 @@
 package com.github.chore3.targetscompass.common.item;
 
 import com.github.chore3.targetscompass.Targetscompass;
-import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtUtils;
 import net.minecraft.world.item.ItemStack;
 
 public class TargetCompassNbt {
     public static final String ROOT_KEY = Targetscompass.MOD_ID;
     public static final String TARGET_TAG_KEY = "TargetTag";
-    public static final String NEAREST_TARGET_POS_KEY = "NearestTargetPos";
 
     private TargetCompassNbt(){}
 
     private static CompoundTag getOrCreateRootTag(ItemStack stack) {
-        return stack.getOrCreateTag().getCompound(ROOT_KEY).isEmpty()
-                ? createRootTag(stack)
-                : stack.getOrCreateTag().getCompound(ROOT_KEY);
-    }
-
-    private static CompoundTag createRootTag(ItemStack stack) {
-        CompoundTag root = new CompoundTag();
-        stack.getOrCreateTag().put(ROOT_KEY, root);
-        return root;
+        CompoundTag tag = stack.getOrCreateTag();
+        if (!tag.contains(ROOT_KEY, 10)) { // 10 = CompoundTag
+            CompoundTag root = new CompoundTag();
+            tag.put(ROOT_KEY, root);
+            return root;
+        }
+        return tag.getCompound(ROOT_KEY);
     }
 
     private static CompoundTag getRootTag(ItemStack stack) {
@@ -44,31 +39,5 @@ public class TargetCompassNbt {
         CompoundTag root = getRootTag(stack);
         if (root == null || !root.contains(TARGET_TAG_KEY)) return null;
         return root.getString(TARGET_TAG_KEY);
-    }
-
-    public static void targetTagClear(ItemStack stack){
-        CompoundTag root = getRootTag(stack);
-        if (root == null) return;
-        root.remove(TARGET_TAG_KEY);
-    }
-
-    // NearestTargetPos
-    public static void nearestTargetPosSet(ItemStack stack, BlockPos targetPos){
-        if (stack == null || stack.isEmpty() || targetPos == null) return;
-        CompoundTag root = getOrCreateRootTag(stack);
-        root.put(NEAREST_TARGET_POS_KEY, NbtUtils.writeBlockPos(targetPos));
-        stack.getOrCreateTag().put(ROOT_KEY, root);
-    }
-
-    public static BlockPos nearestTargetPosGet(ItemStack stack){
-        CompoundTag root = getRootTag(stack);
-        if (root == null || !root.contains(NEAREST_TARGET_POS_KEY, 10)) return null;
-        return NbtUtils.readBlockPos(root.getCompound(NEAREST_TARGET_POS_KEY));
-    }
-
-    public static void nearestTargetPosClear(ItemStack stack){
-        CompoundTag root = getRootTag(stack);
-        if (root == null) return;
-        root.remove(NEAREST_TARGET_POS_KEY);
     }
 }
