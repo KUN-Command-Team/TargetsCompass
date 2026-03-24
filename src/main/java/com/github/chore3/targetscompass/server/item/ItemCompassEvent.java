@@ -23,9 +23,8 @@ import java.util.WeakHashMap;
 
 @Mod.EventBusSubscriber(modid = "targetscompass", bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class ItemCompassEvent {
+    // 共有のターゲット一覧を更新する
     private static final int REBUILD_INTERVAL = 5;
-    private static final int TARGET_SYNC_DISTANCE_BLOCKS = 2;
-    private static final int TARGET_SYNC_DISTANCE_SQ = TARGET_SYNC_DISTANCE_BLOCKS * TARGET_SYNC_DISTANCE_BLOCKS;
 
     @SubscribeEvent
     public static void onServerTick(TickEvent.ServerTickEvent event) {
@@ -37,7 +36,13 @@ public class ItemCompassEvent {
         }
     }
 
+    // 各プレイヤーのコンパスが向く法学を更新する
+    private static final int PACKET_SEND_INTERVAL = 20;
+    private static final Map<ServerPlayer, Long> lastPacketSendTime = new WeakHashMap<>();
+
     private static final Map<ServerPlayer, Map<String, GlobalPos>> lastSentPos = new WeakHashMap<>();
+    private static final int TARGET_SYNC_DISTANCE_BLOCKS = 2;
+    private static final int TARGET_SYNC_DISTANCE_SQ = TARGET_SYNC_DISTANCE_BLOCKS * TARGET_SYNC_DISTANCE_BLOCKS;
 
     @SubscribeEvent
     public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
@@ -45,9 +50,15 @@ public class ItemCompassEvent {
         if (event.player.level().isClientSide()) return;
 
         ServerPlayer player = (ServerPlayer) event.player;
+        long currentTime = player.level().getGameTime();
+        Long lastTime = lastPacketSendTime.getOrDefault(player, 0L);
+        if (currentTime - lastTime < PACKET_SEND_INTERVAL) {
+            return;
+        }
+        lastPacketSendTime.put(player, currentTime);
+
         Map<String, GlobalPos> nearestTargetPosByTag = new HashMap<>();
         Map<String, GlobalPos> lastSentPosMap = lastSentPos.getOrDefault(player, new HashMap<>());
-
         for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
             ItemStack stack = player.getInventory().getItem(i);
             if (stack.isEmpty() || !stack.is(Items.COMPASS)) continue;
