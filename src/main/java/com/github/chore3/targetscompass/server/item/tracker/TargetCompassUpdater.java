@@ -1,6 +1,7 @@
 package com.github.chore3.targetscompass.server.item.tracker;
 
 import com.github.chore3.targetscompass.common.item.TargetCompassNbt;
+import net.minecraft.core.GlobalPos;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -11,16 +12,18 @@ import java.util.Map;
 public class TargetCompassUpdater {
     private TargetCompassUpdater() {}
 
-    public static void updateNearestTarget(ItemStack stack, Player holder, Level level) {
-        String tag = TargetCompassNbt.targetTagGet(stack);
-        if (tag == null || tag.isEmpty()) return;
+    public static GlobalPos findNearestTargetPos(ItemStack stack, Player holder, Level level) {
+        if (stack == null || stack.isEmpty()) return null;
+        String targetTag = TargetCompassNbt.targetTagGet(stack);
+        return findNearestTargetPosByTag(holder, level, targetTag);
+    }
+
+    public static GlobalPos findNearestTargetPosByTag(Player holder, Level level, String tag) {
+        if (tag == null || tag.isEmpty()) return null;
 
         Map<String, List<Player>> targetMap = TargetMapBuilder.getInstance().getTargetMap();
         List<Player> candidates = targetMap.get(tag);
-        if (candidates == null || candidates.isEmpty()) {
-            TargetCompassNbt.nearestTargetPosClear(stack);
-            return;
-        }
+        if (candidates == null || candidates.isEmpty()) return null;
 
         Player nearest = null;
         double nearestDistSq = Double.MAX_VALUE;
@@ -34,10 +37,10 @@ public class TargetCompassUpdater {
             }
         }
 
-        if (nearest != null) {
-            TargetCompassNbt.nearestTargetPosSet(stack, nearest.blockPosition());
-        } else {
-            TargetCompassNbt.nearestTargetPosClear(stack);
+        if (nearest == null) {
+            return null;
         }
+
+        return GlobalPos.of(level.dimension(), nearest.blockPosition());
     }
 }

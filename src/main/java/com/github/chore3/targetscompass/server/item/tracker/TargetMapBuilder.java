@@ -1,7 +1,6 @@
 package com.github.chore3.targetscompass.server.item.tracker;
 
 import com.github.chore3.targetscompass.common.item.TargetCompassNbt;
-import com.google.common.collect.Sets;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.players.PlayerList;
@@ -10,7 +9,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
 import java.util.*;
-import java.util.Collections;
 
 public final class TargetMapBuilder {
     private static final TargetMapBuilder INSTANCE = new TargetMapBuilder();
@@ -34,14 +32,14 @@ public final class TargetMapBuilder {
         playerUpdate(server);
     }
     
-    public void tagUpdate(MinecraftServer server){
+    private void tagUpdate(MinecraftServer server){
         PlayerList list = server.getPlayerList();
         for (ServerPlayer player : list.getPlayers()){
             Set<String> tags = getPlayerCompassTargetTags(player);
             if (tags.isEmpty()) continue;
             for(String tag : tags){
                 if(targetMap.containsKey(tag)) continue;
-                targetMap.put(tag, new ArrayList<Player>());
+                targetMap.put(tag, new ArrayList<>());
             }
         }
     }
@@ -58,7 +56,7 @@ public final class TargetMapBuilder {
     }
 
     private Set<String> getPlayerCompassTargetTags(ServerPlayer player) {
-        Set<String> compassTargetTags = Sets.newHashSet();
+        Set<String> compassTargetTags = new HashSet<>();
         if (player == null) return compassTargetTags;
         for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
             ItemStack stack = player.getInventory().getItem(i);

@@ -1,5 +1,6 @@
 package com.github.chore3.targetscompass.client.renderer;
 
+import com.github.chore3.targetscompass.client.cache.ClientTagTargetPosCache;
 import com.github.chore3.targetscompass.common.item.TargetCompassNbt;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.item.CompassItemPropertyFunction;
@@ -20,10 +21,9 @@ public class TargetCompassOverridePos implements CompassItemPropertyFunction.Com
     @Override
     public GlobalPos getPos(@NotNull ClientLevel level, ItemStack stack, @NotNull Entity entity) {
         if (stack.isEmpty()) return null;
-        if (TargetCompassNbt.targetTagGet(stack) != null) {
-            BlockPos pos = TargetCompassNbt.nearestTargetPosGet(stack);
-            if (pos == null) return null;
-            return GlobalPos.of(level.dimension(), pos);
+        String targetTag = TargetCompassNbt.targetTagGet(stack);
+        if (targetTag != null) {
+            return ClientTagTargetPosCache.getInstance().get(targetTag);
         }
 
         CompoundTag tag = stack.getTag();
