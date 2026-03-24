@@ -1,15 +1,12 @@
 package com.github.chore3.targetscompass.common.item;
 
 import com.github.chore3.targetscompass.Targetscompass;
-import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtUtils;
 import net.minecraft.world.item.ItemStack;
 
 public class TargetCompassNbt {
     public static final String ROOT_KEY = Targetscompass.MOD_ID;
     public static final String TARGET_TAG_KEY = "TargetTag";
-    public static final String NEAREST_TARGET_POS_KEY = "NearestTargetPos";
 
     private TargetCompassNbt(){}
 
@@ -44,11 +41,5 @@ public class TargetCompassNbt {
         CompoundTag root = getRootTag(stack);
         if (root == null || !root.contains(TARGET_TAG_KEY)) return null;
         return root.getString(TARGET_TAG_KEY);
-    }
-
-    public static void targetTagClear(ItemStack stack){
-        CompoundTag root = getRootTag(stack);
-        if (root == null) return;
-        root.remove(TARGET_TAG_KEY);
     }
 }
