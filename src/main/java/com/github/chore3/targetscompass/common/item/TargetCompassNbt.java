@@ -11,15 +11,13 @@ public class TargetCompassNbt {
     private TargetCompassNbt(){}
 
     private static CompoundTag getOrCreateRootTag(ItemStack stack) {
-        return stack.getOrCreateTag().getCompound(ROOT_KEY).isEmpty()
-                ? createRootTag(stack)
-                : stack.getOrCreateTag().getCompound(ROOT_KEY);
-    }
-
-    private static CompoundTag createRootTag(ItemStack stack) {
-        CompoundTag root = new CompoundTag();
-        stack.getOrCreateTag().put(ROOT_KEY, root);
-        return root;
+        CompoundTag tag = stack.getOrCreateTag();
+        if (!tag.contains(ROOT_KEY, 10)) { // 10 = CompoundTag
+            CompoundTag root = new CompoundTag();
+            tag.put(ROOT_KEY, root);
+            return root;
+        }
+        return tag.getCompound(ROOT_KEY);
     }
 
     private static CompoundTag getRootTag(ItemStack stack) {
