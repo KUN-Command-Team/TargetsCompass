@@ -3,7 +3,7 @@ package com.github.chore3.targetscompass;
 import com.github.chore3.targetscompass.common.network.TargetCompassNetwork;
 import com.github.chore3.targetscompass.server.commands.TargetTagCommand;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.server.ServerStartingEvent;
+import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -26,7 +26,7 @@ public class Targetscompass {
     }
 
     @SubscribeEvent
-    public void onServerStarting(ServerStartingEvent event){
-        TargetTagCommand.register(event.getServer().getCommands().getDispatcher());
+    public void onRegisterCommands(RegisterCommandsEvent event) {
+        TargetTagCommand.register(event.getDispatcher());
     }
 }
